@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { GoogleGenAI, Type } from '@google/genai';
+import { mockDriverSavedFunction, mockResponseCreateService } from './mocksFunctionsResponses';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_TOKEN });
 const creatService = {
@@ -49,33 +50,7 @@ const infoDriver = {
   },
 };
 
-const responseCreateService = [
-  {
-    role: 'model',
-    parts: [
-      {
-        functionCall: {
-          name: 'create_service',
-          args: { coordinates: ['6.152791040294973', '-75.63517298365787'] },
-        },
-      },
-    ],
-  },
-  {
-    role: 'tool',
-    parts: [
-      {
-        functionResponse: {
-          name: 'create_service',
-          response: {
-            result: { success: true }, // El resultado de la función
-          },
-        },
-      },
-    ],
-  },
-];
-
+//Mock Chat Gemini pide info para el driver y el cliente la dá
 const geminiPideInfo = [
   {
     role: 'model',
@@ -90,33 +65,6 @@ const geminiPideInfo = [
     parts: [
       {
         text: 'Casa en la esquina roja, primer piso',
-      },
-    ],
-  },
-];
-
-const infoDriverSaved = [
-  {
-    role: 'model',
-    parts: [
-      {
-        functionCall: {
-          name: 'info_driver',
-          args: { infoDriver: 'Casa en la esquina roja, primer piso' },
-        },
-      },
-    ],
-  },
-  {
-    role: 'tool',
-    parts: [
-      {
-        functionResponse: {
-          name: 'info_driver',
-          response: {
-            result: { success: true }, // El resultado de la función
-          },
-        },
       },
     ],
   },
@@ -142,7 +90,8 @@ const userProvideCoordinates = {
 
 const giveCoordinates = true;
 
-const contents = [
+//Mock cliente inicia conversación y pide un taxi
+const clientAskForTaxi = [
   {
     role: 'user',
     parts: [
@@ -159,10 +108,14 @@ const contents = [
       },
     ],
   },
+];
+
+const contents = [
+  ...clientAskForTaxi,
   giveCoordinates ? userProvideCoordinates : userProvideFullAddress,
-  ...responseCreateService,
-  ...geminiPideInfo,
-  ...infoDriverSaved,
+  ...mockResponseCreateService,
+  ...geminiPideInfo, //Mock Chat Gemini pide info para el driver y el cliente la dá
+  ...mockDriverSavedFunction,
 ];
 //Example 1
 async function main() {
