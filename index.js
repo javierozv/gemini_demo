@@ -8,7 +8,7 @@ import {
   mockResponseGetCoordinates,
 } from './mocksFunctionsResponses.js';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_TOKEN });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_APIKEY });
 const creatService = {
   name: 'create_service',
   description: 'Le envía un carro al cliente a las coordenadas subministradas',
