@@ -140,33 +140,35 @@ const userProvideCoordinates = {
   ],
 };
 
+const giveCoordinates = true;
+
+const contents = [
+  {
+    role: 'user',
+    parts: [
+      {
+        text: 'Hola, quiero solicitar un taxi',
+      },
+    ],
+  },
+  {
+    role: 'model',
+    parts: [
+      {
+        text: 'Hola, por favor dime tu ubicación para poder enviarte un taxi. Necesito las coordenadas o la dirección.',
+      },
+    ],
+  },
+  giveCoordinates ? userProvideCoordinates : userProvideFullAddress,
+  ...responseCreateService,
+  ...geminiPideInfo,
+  ...infoDriverSaved,
+];
 //Example 1
 async function main() {
   const response = await ai.models.generateContent({
     model: 'gemini-2.0-flash',
-    contents: [
-      {
-        role: 'user',
-        parts: [
-          {
-            text: 'Hola, quiero solicitar un taxi',
-          },
-        ],
-      },
-      {
-        role: 'model',
-        parts: [
-          {
-            text: 'Hola, por favor dime tu ubicación para poder enviarte un taxi. Necesito las coordenadas o la dirección.',
-          },
-        ],
-      },
-      userProvideCoordinates,
-      userProvideFullAddress,
-      ...responseCreateService,
-      ...geminiPideInfo,
-      ...infoDriverSaved,
-    ],
+    contents,
     config: {
       systemInstruction:
         'Tu eres un agente despachador de taxi que asiste clientes que quieren pedir servicios de taxi,' +
@@ -182,7 +184,15 @@ async function main() {
       ],
     },
   });
-  console.log(response.text, response.functionCalls);
+  for (let content of contents) {
+    if (content.parts[0].text) {
+      console.log(content.role, ': ', content.parts[0].text);
+    }
+  }
+  console.log('last response:');
+  console.log('text:', response.text);
+
+  console.log('function:', response.functionCalls);
 }
 
 main();
