@@ -51,3 +51,30 @@ export const mockResponseCreateService = [
     ],
   },
 ];
+
+export const mockResponseGetCoordinates = [
+  {
+    role: 'model',
+    parts: [
+      {
+        functionCall: {
+          name: 'get_coordinates',
+          args: { fullAddress: 'Cl. 79 Sur #50-152, Yarumito, La Estrella, Antioquia' },
+        },
+      },
+    ],
+  },
+  {
+    role: 'tool',
+    parts: [
+      {
+        functionResponse: {
+          name: 'get_coordinates',
+          response: {
+            result: { success: true, coordinates: ['6.155620200399214', '-75.62910136108707'] }, // El resultado de la función
+          },
+        },
+      },
+    ],
+  },
+];

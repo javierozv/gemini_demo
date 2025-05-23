@@ -2,7 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { GoogleGenAI, Type } from '@google/genai';
-import { mockDriverSavedFunction, mockResponseCreateService } from './mocksFunctionsResponses';
+import {
+  mockDriverSavedFunction,
+  mockResponseCreateService,
+  mockResponseGetCoordinates,
+} from './mocksFunctionsResponses.js';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_TOKEN });
 const creatService = {
@@ -88,7 +92,7 @@ const userProvideCoordinates = {
   ],
 };
 
-const giveCoordinates = true;
+const giveCoordinates = false;
 
 //Mock cliente inicia conversación y pide un taxi
 const clientAskForTaxi = [
@@ -112,13 +116,16 @@ const clientAskForTaxi = [
 
 const contents = [
   ...clientAskForTaxi,
-  giveCoordinates ? userProvideCoordinates : userProvideFullAddress,
+  ...(giveCoordinates
+    ? [userProvideCoordinates]
+    : [userProvideFullAddress, ...mockResponseGetCoordinates]),
   ...mockResponseCreateService,
   ...geminiPideInfo, //Mock Chat Gemini pide info para el driver y el cliente la dá
   ...mockDriverSavedFunction,
 ];
 //Example 1
 async function main() {
+  console.time('prueba');
   const response = await ai.models.generateContent({
     model: 'gemini-2.0-flash',
     contents,
@@ -146,6 +153,7 @@ async function main() {
   console.log('text:', response.text);
 
   console.log('function:', response.functionCalls);
+  console.timeEnd('prueba');
 }
 
 main();
