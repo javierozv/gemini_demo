@@ -115,7 +115,7 @@ const clientAskForTaxi = [
 ];
 
 const contents = [
-  ...clientAskForTaxi,
+  ...clientAskForTaxi, //Mock cliente init chat
   ...(giveCoordinates
     ? [userProvideCoordinates]
     : [userProvideFullAddress, ...mockResponseGetCoordinates]),
